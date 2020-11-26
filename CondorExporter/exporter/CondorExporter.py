@@ -191,7 +191,13 @@ def main():
         REGISTRY.unregister(wsgi_collector)
         REGISTRY.register(CondorCollector(collector_address))
 
-        start_wsgi_server(addr=address, port=port)
+        #start_wsgi_server(addr=address, port=port)
+        from wsgiref.simple_server import make_server
+        from prometheus_client import make_wsgi_app
+        app = make_wsgi_app()
+        httpd = make_server('', port, app)
+        httpd.serve_forever()
+        
         print("Exporter listening on %s:%d" % (address, port))
         while True:
             time.sleep(1)
